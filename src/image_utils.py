@@ -110,6 +110,7 @@ def draw_specific_footer(
 ):
     """特定のExifデータを表示するフッターを描画する関数"""
     model = exif_data.get("Model", "Unknown")
+    camera_make = exif_data.get("Make", "")
 
     focal_length_35mm = exif_data.get("FocalLengthIn35mmFilm", "")
     if focal_length_35mm:
@@ -144,13 +145,14 @@ def draw_specific_footer(
     text_y_position = img.height + int(base_y_offset)
     text_x_position = int(base_left_margin)
 
-    # モデル名
-    draw.text(
-        (text_x_position, text_y_position),
-        exif_text,
-        fill=(0, 0, 0),  # 黒色
-        font=font,
-    )
+    # モデル名 - Appleの場合のみ表示
+    if "Apple" in camera_make:
+        draw.text(
+            (text_x_position, text_y_position),
+            exif_text,
+            fill=(0, 0, 0),  # 黒色
+            font=font,
+        )
 
     # カメラ情報の位置をスケーリング
     camera_x_position = int(text_x_position + camera_info_x)

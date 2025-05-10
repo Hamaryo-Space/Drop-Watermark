@@ -1,6 +1,8 @@
 import os
 import sys
 from image_utils import add_footer_with_exif
+from PIL import Image
+from exif_utils import get_exif_data
 
 
 def main():
@@ -64,7 +66,18 @@ def main():
 
     # フッター画像とフォントのパス
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    footer_image_path = os.path.join(current_dir, "./Assets/Apple.jpeg")
+
+    img = Image.open(input_image_path)
+    exif_data = get_exif_data(img)
+    camera_make = exif_data.get("Make", "").upper()
+
+    if "SONY" in camera_make:
+        footer_image_path = os.path.join(current_dir, "./Assets/α.jpeg")
+    elif "CANON" in camera_make:
+        footer_image_path = os.path.join(current_dir, "./Assets/EOS.jpeg")
+    else:  # Apple または他のメーカー（デフォルト）
+        footer_image_path = os.path.join(current_dir, "./Assets/Apple.jpeg")
+
     font_path = os.path.join(current_dir, "./Fonts/SFPRODISPLAYBOLD.OTF")
 
     add_footer_with_exif(
