@@ -75,6 +75,10 @@ def main():
         footer_image_path = os.path.join(current_dir, "./Assets/α.jpeg")
     elif "CANON" in camera_make:
         footer_image_path = os.path.join(current_dir, "./Assets/EOS.jpeg")
+    elif "NIKON" in camera_make:
+        footer_image_path = os.path.join(current_dir, "./Assets/Z.jpeg")
+    elif "RICOH IMAGING COMPANY, LTD." in camera_make:
+        footer_image_path = os.path.join(current_dir, "./Assets/Ricoh.jpeg")
     else:  # Apple または他のメーカー（デフォルト）
         footer_image_path = os.path.join(current_dir, "./Assets/Apple.jpeg")
 
