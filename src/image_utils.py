@@ -1,5 +1,7 @@
 from PIL import Image, ImageFont, ImageDraw, ExifTags
 from PIL.ExifTags import TAGS
+import piexif
+from io import BytesIO
 
 from exif_utils import get_exif_data, format_date_time
 
@@ -194,6 +196,14 @@ def add_footer_with_exif(
         # 入力画像を開く
         img = Image.open(input_image_path)
 
+        # DPI情報を取得
+        dpi = img.info.get("dpi")
+
+        # 元の画像からExifバイトデータを取得（後で保存するため）
+        original_exif_bytes = None
+        if "exif" in img.info:
+            original_exif_bytes = img.info["exif"]
+
         # 画像の向きを適切に修正し、元のExifデータを保持
         img, original_exif = apply_orientation(img)
 
@@ -259,8 +269,20 @@ def add_footer_with_exif(
         else:
             draw_standard_footer(draw, exif_data, img, width_ratio, font)
 
-        # 新しい画像を保存
-        new_img.save(output_image_path)
+        # 新しい画像を保存（DPIとExifデータを保持）
+        if original_exif_bytes:
+            # 元のExifデータを使用して保存
+            if dpi:
+                new_img.save(output_image_path, dpi=dpi, exif=original_exif_bytes)
+            else:
+                new_img.save(output_image_path, exif=original_exif_bytes)
+        else:
+            # Exifデータがない場合はDPIだけ設定
+            if dpi:
+                new_img.save(output_image_path, dpi=dpi)
+            else:
+                new_img.save(output_image_path)
+
         print(f"画像が保存されました: {output_image_path}")
 
     except Exception as e:
